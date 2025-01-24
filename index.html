@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Riddle Challenge</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Code Riddle Challenge</h1>
+  <p>Scan the QR code below to begin the challenge:</p>
+  
+  <!-- QR Code -->
+  <div id="qrcode"></div>
+
+  <script>
+    // Cloudflare Pages hosted URL for your riddle page
+    const riddlePageUrl = "https://your-cloudflare-pages-url.pages.dev/riddle.html";  // Replace with your actual Cloudflare Pages URL
+
+    // Generate the QR Code pointing to the riddle page
+    new QRCode(document.getElementById("qrcode"), {
+      text: riddlePageUrl,  // The URL to riddle.html
+      width: 128,
+      height: 128
+    });
+  </script>
+</body>
+</html>
