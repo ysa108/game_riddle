@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riddle Challenge</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #result {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Riddle Challenge</h1>
+  <p id="riddle">I am not alive, but I grow. I don’t have lungs, but I need air. What am I?</p>
+  
+  <div id="timer"></div>
+
+  <form id="riddleForm">
+    <input type="text" id="answer" placeholder="Your answer" required>
+    <button type="submit">Submit Answer</button>
+  </form>
+  
+  <div id="result"></div>
+
+  <script>
+    // Start the timer as soon as the page loads
+    let startTime = new Date().getTime();
+    
+    function updateTimer() {
+      let currentTime = new Date().getTime();
+      let elapsed = Math.floor((currentTime - startTime) / 1000); // Time in seconds
+      document.getElementById("timer").innerHTML = `Time: ${elapsed} seconds`;
+    }
+
+    setInterval(updateTimer, 1000); // Update timer every second
+
+    // Handle form submission and check the answer
+    const correctAnswer = "fire"; // Correct answer for the riddle
+
+    $("#riddleForm").submit(function(event) {
+      event.preventDefault(); // Prevent form from reloading the page
+      let userAnswer = $("#answer").val().toLowerCase().trim();
+
+      if (userAnswer === correctAnswer) {
+        let endTime = new Date().getTime();
+        let timeTaken = Math.floor((endTime - startTime) / 1000); // Calculate time taken in seconds
+        document.getElementById("result").innerHTML = `Correct! You solved it in ${timeTaken} seconds.`;
+      } else {
+        document.getElementById("result").innerHTML = "Incorrect answer. Try again!";
+      }
+    });
+  </script>
+</body>
+</html>
