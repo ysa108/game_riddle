@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riddle Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .timer {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: red;
+    }
+    .riddle {
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Riddle Challenge</h1>
+  <p class="timer" id="timer">Time Remaining: 1:00</p>
+  <div id="game">
+    <div class="riddle">
+      <p>Riddle 1: I'm always hard when I'm dry, but smooth and soft when wet. What am I?</p>
+      <input type="text" id="riddle1" placeholder="Your answer here">
+    </div>
+    <div class="riddle">
+      <p>Riddle 2: The more you play with me, the harder I get. What am I?</p>
+      <input type="text" id="riddle2" placeholder="Your answer here">
+    </div>
+    <div class="riddle">
+      <p>Riddle 3: I go in hard, come out soft, and I never mind if you blow me. What am I?</p>
+      <input type="text" id="riddle3" placeholder="Your answer here">
+    </div>
+    <div class="riddle">
+      <p>Riddle 4: What gets wet when drying?</p>
+      <input type="text" id="riddle4" placeholder="Your answer here">
+    </div>
+    <div class="riddle">
+      <p>Riddle 5: I get bigger the more you blow me, and if I pop, you'll be sad. What am I?</p>
+      <input type="text" id="riddle5" placeholder="Your answer here">
+    </div>
+    <button onclick="checkAnswers()">Submit Answers</button>
+  </div>
+  <p id="result" class="hidden"></p>
+
+  <script>
+    let timeLeft = 60; // 60 seconds
+    let timer; // Global timer variable
+    const timerElement = document.getElementById('timer');
+    const resultElement = document.getElementById('result');
+    const gameElement = document.getElementById('game');
+
+    const answers = {
+      riddle1: "sponge",
+      riddle2: "puzzle",
+      riddle3: "chewing gum",
+      riddle4: "towel",
+      riddle5: "balloon"
+    };
+
+    // Timer logic
+    function startTimer() {
+      timer = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          endGame(false);
+        }
+      }, 1000);
+    }
+
+    startTimer(); // Start the timer when the game loads
+
+    // Check answers with feedback
+    function checkAnswers() {
+      const riddles = ["riddle1", "riddle2", "riddle3", "riddle4", "riddle5"];
+      let allCorrect = true;
+
+      riddles.forEach(id => {
+        const input = document.getElementById(id);
+        const userAnswer = input.value.toLowerCase().trim();
+        const correctAnswer = answers[id];
+
+        // Remove any previous messages
+        input.style.borderColor = "";
+        input.nextElementSibling?.remove();
+
+        if (userAnswer === "") {
+          const errorMessage = document.createElement("p");
+          errorMessage.textContent = "Please provide an answer!";
+          errorMessage.className = "error";
+          input.insertAdjacentElement("afterend", errorMessage);
+          input.style.borderColor = "red";
+          allCorrect = false;
+        } else if (userAnswer !== correctAnswer) {
+          const errorMessage = document.createElement("p");
+          errorMessage.textContent = "Incorrect! Check your spelling or try again.";
+          errorMessage.className = "error";
+          input.insertAdjacentElement("afterend", errorMessage);
+          input.style.borderColor = "red";
+          allCorrect = false;
+        } else {
+          input.style.borderColor = "green";
+        }
+      });
+
+      if (allCorrect) {
+        endGame(true);
+      }
+    }
+
+    // End game logic
+    function endGame(isWin) {
+      clearInterval(timer);
+      gameElement.classList.add('hidden');
+      resultElement.classList.remove('hidden');
+
+      if (isWin) {
+        const score = timeLeft * 10; // Calculate score based on remaining time
+        resultElement.textContent = `Congratulations! You solved all the riddles in time! Your score is: ${score}`;
+        resultElement.className = "success";
+      } else {
+        resultElement.textContent = "Time's up! You didn't solve all the riddles in time.";
+        resultElement.className = "error";
+      }
+    }
+  </script>
+</body>
+</html>
