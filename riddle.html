@@ -1,62 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riddle Challenge</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      text-align: center;
-    }
-    #result {
-      font-size: 1.5em;
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riddle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 2em;
+            color: red;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        input {
+            font-size: 1em;
+            padding: 10px;
+            width: 60%;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Riddle Challenge</h1>
-  <p id="riddle">I am not alive, but I grow. I don’t have lungs, but I need air. What am I?</p>
-  
-  <div id="timer"></div>
+    <h1>Riddle Game</h1>
 
-  <form id="riddleForm">
-    <input type="text" id="answer" placeholder="Your answer" required>
-    <button type="submit">Submit Answer</button>
-  </form>
-  
-  <div id="result"></div>
+    <div id="question-container">
+        <div class="question" id="question"></div>
+        <input type="text" id="answer" placeholder="Type your answer here" />
+        <button onclick="checkAnswer()">Submit Answer</button>
+    </div>
 
-  <script>
-    // Start the timer as soon as the page loads
-    let startTime = new Date().getTime();
+    <div id="timer">Time: 0s</div>
     
-    function updateTimer() {
-      let currentTime = new Date().getTime();
-      let elapsed = Math.floor((currentTime - startTime) / 1000); // Time in seconds
-      document.getElementById("timer").innerHTML = `Time: ${elapsed} seconds`;
-    }
+    <div id="score-container" class="hidden">
+        <h2>Congratulations! 🎉</h2>
+        <p>You solved all the riddles in <span id="total-score">0</span> seconds!</p>
+    </div>
 
-    setInterval(updateTimer, 1000); // Update timer every second
+    <script>
+        // Riddles and answers
+        const riddles = [
+            { question: "What has keys but can't open locks?", answer: "piano" },
+            { question: "The more of me you take, the more you leave behind. What am I?", answer: "footsteps" },
+            { question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo" },
+            { question: "What has to be broken before you can use it?", answer: "egg" },
+            { question: "I’m tall when I’m young, and I’m short when I’m old. What am I?", answer: "candle" },
+        ];
 
-    // Handle form submission and check the answer
-    const correctAnswer = "fire"; // Correct answer for the riddle
+        let currentRiddleIndex = 0;
+        let totalTime = 0;
+        let startTime;
+        let timerInterval;
 
-    $("#riddleForm").submit(function(event) {
-      event.preventDefault(); // Prevent form from reloading the page
-      let userAnswer = $("#answer").val().toLowerCase().trim();
+        // Start the timer
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                document.getElementById("timer").innerText = `Time: ${elapsedTime}s`;
+            }, 1000);
+        }
 
-      if (userAnswer === correctAnswer) {
-        let endTime = new Date().getTime();
-        let timeTaken = Math.floor((endTime - startTime) / 1000); // Calculate time taken in seconds
-        document.getElementById("result").innerHTML = `Correct! You solved it in ${timeTaken} seconds.`;
-      } else {
-        document.getElementById("result").innerHTML = "Incorrect answer. Try again!";
-      }
-    });
-  </script>
+        // Stop the timer and return elapsed time
+        function stopTimer() {
+            clearInterval(timerInterval);
+            return Math.floor((Date.now() - startTime) / 1000);
+        }
+
+        // Display the current riddle
+        function displayRiddle() {
+            const currentRiddle = riddles[currentRiddleIndex];
+            document.getElementById("question").innerText = currentRiddle.question;
+        }
+
+        // Check the user's answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+            const correctAnswer = riddles[currentRiddleIndex].answer;
+
+            if (userAnswer === correctAnswer) {
+                const timeTaken = stopTimer();
+                totalTime += timeTaken; // Add time for this riddle to total time
+                currentRiddleIndex++;
+
+                if (currentRiddleIndex < riddles.length) {
+                    // Move to the next riddle
+                    document.getElementById("answer").value = ""; // Clear the input field
+                    startTimer(); // Restart the timer
+                    displayRiddle();
+                } else {
+                    // All riddles solved
+                    document.getElementById("question-container").classList.add("hidden");
+                    document.getElementById("score-container").classList.remove("hidden");
+                    document.getElementById("total-score").innerText = totalTime;
+                }
+            } else {
+                alert("Wrong answer. Try again!");
+            }
+        }
+
+        // Initialize the game
+        window.onload = function () {
+            displayRiddle();
+            startTimer();
+        };
+    </script>
 </body>
 </html>
